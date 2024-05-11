@@ -5,7 +5,10 @@ class Engine {
         this.maxHeight = 10;
         this.maxWidth = 50;
 
-        this.buffer = Array(this.maxHeight).fill(Array());
+        this.buffer = Array(this.maxHeight);
+        for(let i = 0; i < this.maxHeight; i++) {
+            this.buffer[i] = Array();
+        }
         this.bufferEl = document.getElementById("buffer");
 
         this.cursorEl = document.getElementById("cursor");
@@ -45,9 +48,18 @@ class Engine {
             if(this.mode == EditMode.Insert) {
                 let buf = this.buffer[this.cursorY];
                 if(event.key == "Backspace") {
-                    // TODO: limit cursorXY 
-                    buf.splice(this.cursorX-1, 1);
-                    this.cursorX -= 1;
+                    if(this.cursorX == 0) {
+                        this.cursorY -= 1;
+                        let buf2 = this.buffer[this.cursorY];
+                        this.cursorX = buf2.length;
+                        this.savedCursorX = this.cursorX;
+                        this.buffer[this.cursorY] = buf2.concat(buf);
+                        this.buffer.splice(this.cursorY+1, 1);
+                    }
+                    else {
+                        buf.splice(this.cursorX-1, 1);
+                        this.cursorX -= 1;
+                    }
                 }
                 else {
                     buf.splice(this.cursorX, 0, event.key);
@@ -113,7 +125,7 @@ class Engine {
         if (bufLen == -1) {
             bufLen = 0;
         }
-        if(this.cursorX > bufLen) {
+        if(this.cursorX > bufLen && this.mode != EditMode.Insert) {
             this.savedCursorX = this.cursorX;
             this.cursorX = bufLen;
         }
@@ -160,7 +172,7 @@ class Engine {
 
     render() {
         let text = "";
-        for(let y = 0; y < this.maxHeight; y++) {
+        for(let y = 0; y < this.buffer.length; y++) {
             for(let x = 0; x < this.buffer[y].length; x++) {
                 let char = this.buffer[y][x];
                 if(x == this.cursorX && y == this.cursorY) {
