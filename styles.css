@@ -1,0 +1,108 @@
+:root {
+    --bg1: #101010;
+    --bg2: #202020;
+    --bg3: #84bfff;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    color: white;
+    font-family: "Fira Code", monospace;
+}
+
+html, body {
+    height: 100%;
+}
+
+.main {
+    display: flex;
+    height: 100vh;
+    flex-flow: column;
+}
+
+.bar {
+    display: flex;
+    background-color: var(--bg1);
+    flex: 0 1 4em;
+    align-items: center;
+    justify-content: space-between;
+
+    .title {
+        margin-left: 1em;
+        font-size: 1.5em;
+    }
+
+    img {
+        margin-right: 1em;
+    }
+}
+
+.yellow {
+    color: #FFDF2D;
+}
+
+.body {
+    background-color: var(--bg2);
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: -100;
+}
+
+.buffer-holder {
+    /* background-color: red; */
+    height: 80%;
+    width: 50%;
+}
+
+#buffer {
+    width: 100%;
+    height: 100%;
+    font-size: 1.5em;
+}
+
+.inverted {
+    filter: invert(0);
+    animation: inverted-blink 1.2s step-start;
+    animation-iteration-count: infinite;
+}
+
+@keyframes inverted-blink {
+  from {
+    filter: invert(0);
+  }
+
+  50% {
+    filter: invert(1);
+  }
+
+  from {
+    filter: invert(0);
+  }
+}
+
+#cursor {
+    z-index: -1;
+    position: relative;
+    /* background-color: var(--bg3); */
+    background-color: white;
+    opacity: 0;
+    animation: cursor-blink 1.2s step-start;
+    animation-iteration-count: infinite;
+}
+
+@keyframes cursor-blink {
+  from {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  from {
+    opacity: 0;
+  }
+}
