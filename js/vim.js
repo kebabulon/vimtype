@@ -1,4 +1,35 @@
-const ActionType = createEnum(["Command", "Motion"])
+const ActionType = createEnum(["Command", "Motion"]);
+const StopChars = createEnum([
+    // ' ',
+    '.',
+    ',',
+    '-',
+    ';',
+    ':',
+    '"',
+    "'",
+
+    '!',
+    '@',
+    '#',
+    '$',
+    '%',
+    '^',
+    '&',
+    '*',
+    '(',
+    ')',
+    '[',
+    ']',
+    '{',
+    '}',
+
+    '-',
+    '+',
+    '=',
+    '/',
+    '?',
+]);
 
 class Vim {
     constructor() {
@@ -67,6 +98,47 @@ class Vim {
                 }
             },
 
+            "w": class {
+                constructor() {
+                    this.type = ActionType.Motion; 
+                }
+                action() {
+                    let buf = engine.buffer[engine.cursorY];
+                    let done = false;
+                    let onStop = false;
+                    let waitForStop = false;
+                    if(StopChars[buf[engine.cursorX]] != undefined) {
+                        onStop = true;
+                    }
+                    for(let i=engine.cursorX+1; i < buf.length; i++) {
+                        let char = buf[i];
+                        if(!waitForStop) {
+                            if(char == ' ') {
+                                waitForStop = true;
+                            }
+                            if(onStop && StopChars[char] == undefined) {
+                                waitForStop = true;
+                            }
+                            if(!onStop && StopChars[char] != undefined) {
+                                waitForStop = true;
+                            }
+                        }
+                        if(waitForStop && char != ' ') {
+                            engine.cursorX = i;
+                            done = true;
+                            break
+                        }
+                    }
+                    if(!done) {
+                        engine.cursorX = 0;
+                        engine.savedCursorX = engine.cursorX;
+                        engine.cursorY += 1;
+                    }
+                }
+                select() {
+                    // return 1 char
+                }
+            },
         }
     }
 

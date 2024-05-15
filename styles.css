@@ -69,6 +69,10 @@ html, body {
     animation-iteration-count: infinite;
 }
 
+.nu {
+    color: gray;
+}
+
 @keyframes inverted-blink {
   from {
     filter: invert(0);

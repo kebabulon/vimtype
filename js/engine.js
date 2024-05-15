@@ -61,6 +61,14 @@ class Engine {
                         this.cursorX -= 1;
                     }
                 }
+                else if(event.key == "Enter") {
+                    this.buffer.splice(this.cursorY+1, 0, Array());
+                    this.buffer[this.cursorY+1] = buf.slice(this.cursorX);
+                    this.buffer[this.cursorY] = buf.slice(0, this.cursorX);
+                    this.cursorX = 0;
+                    this.cursorY += 1;
+                    this.savedCursorX = this.cursorX;
+                }
                 else {
                     buf.splice(this.cursorX, 0, event.key);
                     this.cursorX += 1;
@@ -114,16 +122,16 @@ class Engine {
         }
 
         // X
-        if(this.cursorX < 0) {
-            this.cursorX = 0;
-        }
-
         if(this.lastCursorY != this.cursorY) {
             this.cursorX = this.savedCursorX;
         }
         let bufLen = this.buffer[this.cursorY].length-1;
         if (bufLen == -1) {
             bufLen = 0;
+        }
+        if(this.cursorX < 0) {
+            this.savedCursorX = this.cursorX;
+            this.cursorX = 0;
         }
         if(this.cursorX > bufLen && this.mode != EditMode.Insert) {
             this.savedCursorX = this.cursorX;
@@ -173,6 +181,11 @@ class Engine {
     render() {
         let text = "";
         for(let y = 0; y < this.buffer.length; y++) {
+            let space = '';
+            if(y < 10) {
+                space += ' ';
+            }
+            text += '<span class="nu">' + space + y.toString() + ' </span>';
             for(let x = 0; x < this.buffer[y].length; x++) {
                 let char = this.buffer[y][x];
                 if(x == this.cursorX && y == this.cursorY) {
@@ -185,6 +198,6 @@ class Engine {
         this.bufferEl.innerHTML = text;
 
         this.cursorEl.style.top = (this.cursorHeight * (1 + this.cursorY)).toString() + "px";
-        this.cursorEl.style.left = (this.cursorWidth * this.cursorX).toString() + "px";
+        this.cursorEl.style.left = (this.cursorWidth*3 + this.cursorWidth * this.cursorX).toString() + "px";
     }
 }
